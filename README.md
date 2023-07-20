@@ -177,7 +177,7 @@ let payload = new Lorry({ key1: 'value1', key2: 'value2' }, { name: 'MyLorry', e
 This will create a Lorry instance, set a flash message, replace all existing key-value pairs with a new one, and throw an error, all in one line of code.
 
 
-## Kitchen Sink
+### Kitchen Sink
 
 This section presents a comprehensive example that combines all the functionalities of the `Lorry` class in a single sequence using method chaining.
 
@@ -251,7 +251,5 @@ if (payload.flash) {
 Remember, the `err` and `flash` keys will hold the details of the error or flash message. This makes it easy to handle them accordingly, whether you need to display an error message to the user or log the details for debugging.
 
 ## Conclusion
-
-Sure, here's a conclusion for the README:
 
 In conclusion, the `Lorry` class serves as a versatile tool for managing key-value pair data in a JavaScript ES6 environment. It was designed with user-friendliness and flexibility in mind, and it shines in applications where payloads need to be passed between functions, particularly in scenarios involving user-facing information display. Whether you're merging, replacing, or resetting data, `Lorry` ensures efficient and effective handling. The provided methods even assist in generating flash messages for end-users and development messages for developers, and they allow for easy error checking with the `Throw()` method. By facilitating method chaining, it promotes clean and maintainable code. We hope that you find `Lorry` as useful in your projects as it has been in ours, and we welcome any feedback or contributions that can help improve its functionality. Happy coding!
