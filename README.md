@@ -252,6 +252,4 @@ Remember, the `err` and `flash` keys will hold the details of the error or flash
 
 ## Conclusion
 
-Sure, here's a conclusion for the README:
-
 In conclusion, the `Lorry` class serves as a versatile tool for managing key-value pair data in a JavaScript ES6 environment. It was designed with user-friendliness and flexibility in mind, and it shines in applications where payloads need to be passed between functions, particularly in scenarios involving user-facing information display. Whether you're merging, replacing, or resetting data, `Lorry` ensures efficient and effective handling. The provided methods even assist in generating flash messages for end-users and development messages for developers, and they allow for easy error checking with the `Throw()` method. By facilitating method chaining, it promotes clean and maintainable code. We hope that you find `Lorry` as useful in your projects as it has been in ours, and we welcome any feedback or contributions that can help improve its functionality. Happy coding!
