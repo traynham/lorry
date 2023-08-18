@@ -95,5 +95,21 @@ describe('Throw', () => {
 		lorry.Throw(500)
 		expect(console.error).not.toHaveBeenCalled()
 	})
+	
+	test('test simple message signature', () => {
+		const lorry = new Lorry({}, { name: 'MyLorry', errorLogging: false })
+		lorry.Throw('Use a string to throw an error')
+		expect(lorry.err.message).toBe('Use a string to throw an error')
+	})
+	
+	it('test more complex message signature', () => {
+		lorry.Throw('Use a string to throw an error', 'Test Lorry', 5)
+		expect(lorry.err).toEqual({
+			name: 'Test Lorry',
+			code: 500,
+			message: 'Use a string to throw an error',
+			level: 5
+		})
+	})
 
 })
