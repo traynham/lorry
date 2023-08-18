@@ -116,6 +116,15 @@ class Lorry {
 	// with defaults to a generic server error (code 500) if no code is provided.
 	Throw(code = 500, message, name, level = 0) {
 		
+		// If the code is a string, rearrange the parameters and set default values (Reset the signature)
+		if(typeof code === 'string'){
+			level = name
+			name = message
+			message = code
+			code = 500
+		}
+		
+		// Get the error from the predefined errors list using the code
 		let error = errors[code]
 		
 		// If a custom code is used or the error code does not exist in our errors list, 
@@ -124,6 +133,7 @@ class Lorry {
 			error = errors[500]
 		}
 		
+		// Construct the error object with the given parameters, or defaults from the error list.
 		this.err = {
 			name: name || error.name,
 			code: code,
@@ -131,12 +141,14 @@ class Lorry {
 			level
 		}
 		
+		// If error logging is enabled, log the error to the console.
 		if(this.#OPT.errorLogging){
 			console.error(
 				`${this.#OPT.name} › ERROR ${this.err.code} ${this.err.name}: ${this.err.message}`
 			)
 		}
 		
+		// Return the current object, allowing for method chaining.
 		return this
 		
 	}
