@@ -31,7 +31,7 @@ Sure, here's a paragraph explaining how to install the Lorry class using npm:
 Installing the Lorry class is straightforward and easy using npm, the Node Package Manager. The module is hosted on GitHub and can be added directly to your project via the GitHub repository. Simply open your terminal, navigate to your project directory, and run the following command:
 
 ```bash
-npm i github:traynham/lorry
+npm i @jessetraynham/lorry
 ```
 
 This command tells npm to install the Lorry class module from the "traynham/lorry" repository on GitHub. After running this command, the Lorry class will be downloaded and added to your `node_modules` folder, and you will be able to import it into your project files and start using it immediately.
