@@ -1,7 +1,27 @@
+## Table of Contents
+
+1. [Lorry](#Lorry)
+   * [Introduction](#Lorry)
+   * [Installation](#Installation)
+   * [Usage](#Usage)
+	  * [Import](#Import)
+	  * [Creating an Instance](#Creating-an-Instance)
+	  * [Merging keys](#Merging-keys)
+	  * [Replacing keys](#Replacing-keys)
+	  * [Accessing and Modifying keys directly](#Accessing-and-Modifying-keys-directly)
+	  * [Resetting keys](#Resetting-keys)
+	  * [Error Handling](#Error-Handling)
+	  * [Flash Method](#Flash-Method)
+	  * [Method Chaining](#Method-Chaining)
+	  * [Kitchen Sink](#Kitchen-Sink)
+	  * [Checking for Errors and Flash Messages](#Checking-for-Errors-and-Flash-Messages)
+   * [Conclusion](#Conclusion)
+
+
 # Lorry
 The Lorry class, built with JavaScript ES6, serves as a robust tool for manipulating key-value pair data. It offers a suite of functions for controlling and shaping your data, including operations for merging new key-value pairs into an existing dataset, replacing all current pairs with a new set, and completely resetting the dataset by removing all existing pairs. Furthermore, the class provides robust error handling capabilities to ensure your operations run smoothly.
 
-The Lorry class is especially useful when creating and modifying payloads intended to be passed between different functions, such as those seen in an Express render call. The class assists in managing the data through various stages of processing, while keeping it easily accessible and manipulatable.
+The Lorry class is especially useful when creating and modifying payloads intended to be passed between different functions, such as those seen in an Express render call. The class assists in managing the data through various stages of processing, while keeping it easily accessible and malleable.
 
 Designed with end-user applications in mind, the Lorry class is not just a developer's tool but also a means to improve the user experience. It helps handle and shape the data that will ultimately be presented to the user, ensuring the data remains consistent, controlled, and ready for presentation at all times.
 
@@ -117,9 +137,20 @@ payload.Reset();
 ### Error Handling
 
 ```javascript
-// SYNTAX
+// SYNTAX 1
 payload.Throw(code, message, name, level)
+
+// SYNTAX 2
+payload.Throw(message, name, level)
+
 ```
+
+**Parameters**
+
+* Code - A numeric code for the error.
+* Message - A custom error message as a string.
+* Name - The name of the error, which is a short one word description of the error.
+* Level - A numeric or textual description for the level of the error.
 
 The Lorry class provides a flexible approach to error handling via the `Throw()` method. This method allows you to set an error message on the Lorry instance with various levels of customization.
 
@@ -140,6 +171,19 @@ The Lorry class provides a flexible approach to error handling via the `Throw()`
 	```javascript
 	payload.Throw(404, "Page not found")
 	```
+
+4. **Pass Just Message:** This variation of the Throw() method allows you to define an error message without specifying an error code or other parameters. It's particularly useful when you want to communicate a simple, clear message to the user without needing to correlate it with a specific error code or internal error name.
+	
+	```javascript
+	payload.Throw("Sorry, that action is not possible. Seek help.")
+	```
+
+5. **Passing Message, Name, and Level:** This signature allows for even greater customization of the error thrown by letting you specify not just the error message, but also the error name and the level of the error.
+	
+	```javascript
+	payload.Throw("Invalid input provided", "InputError", "Critical")
+	```
+
 
 These options provide flexibility in handling errors and allow you to easily customize the error message to suit the situation. Whether you need a quick, default error or a more specific, custom error, the Lorry class has got you covered.
 
@@ -197,7 +241,7 @@ payload.title = 'My Great Title';
 
 // Directly set a key on the instance to a function and run it
 payload.myFunction = () => 'Hello, World!';
-console.log(lorry.myFunction());
+console.log(payload.myFunction());
 
 // Log the resulting Lorry object
 console.log(payload);
@@ -210,7 +254,7 @@ console.log(payload);
 	flash: {
 		title: 'FlashTitle',
 		message: 'This is a flash message'
-  	},
+	},
 	key5: 'value5',
 	title: 'My Great Title',
 	myFunction: [Function],
