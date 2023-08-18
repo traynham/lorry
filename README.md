@@ -43,7 +43,7 @@ This command tells npm to install the Lorry class module from the "traynham/lorr
 To use this class in your project, simply import it at the top of your JavaScript file:
 
 ```javascript
-import Lorry from 'lorry';
+import Lorry from '@jessetraynham/lorry';
 ```
 
 ### Creating an Instance
@@ -226,7 +226,7 @@ This section presents a comprehensive example that combines all the functionalit
 
 ```javascript
 // Import Lorry
-import Lorry from 'lorry';
+import Lorry from '@jessetraynham/lorry';
 
 // Instantiate a new Lorry object with initial data and options
 let payload = new Lorry({ key1: 'value1', key2: 'value2' }, { name: 'MyLorry', errorLogging: true, verbose: true })
