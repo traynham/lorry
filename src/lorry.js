@@ -1,4 +1,3 @@
-import merge from 'lodash/merge.js';
 import errors from './errors.js'
 
 
@@ -44,6 +43,33 @@ class Lorry {
 		
 	}
 	
+	// A helper function to check if a value is an object (but not an array).
+	_isObject(obj) {
+		return obj && typeof obj === 'object' && !Array.isArray(obj)
+	}
+	
+	// Deep merge two or more javascript objects.
+	_merge(target, ...sources) {
+		
+		sources.forEach(source => {
+			if (this._isObject(source)) {
+				Object.keys(source).forEach(key => {
+					if (this._isObject(source[key])) {
+						if (!target[key]) {
+							target[key] = {};
+						}
+						this._merge(target[key], source[key]);
+					} else {
+						target[key] = source[key];
+					}
+				});
+			}
+		});
+		
+		return target;
+		
+	}
+	
 	
 	_verbose(msg) {
 		if(this.#OPT.verbose){
@@ -75,8 +101,8 @@ class Lorry {
 		
 		// Clean the pairs object before merging.
 		const cleanObj = this._cleanObj(obj)
-		
-		merge(this, cleanObj)
+
+		this._merge(this, cleanObj)
 		
 		this._verbose(`Merge › ${JSON.stringify(obj)}`)
 		
