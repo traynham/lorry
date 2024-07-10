@@ -16,6 +16,14 @@ describe('Merge', () => {
 		lorry.Merge({key2: 'value2'})
 		expect(lorry.key2).toBe('value2')
 	})
+	
+	it('should merge correctly with deeper objects', () => {
+		lorry.Merge({key1: 'value1'})
+		expect(lorry.key1).toBe('value1')
+		lorry.Merge({key2: 'value2', key3: {one: 'won', two: 'too'}})
+		expect(lorry.key2).toBe('value2')
+		expect(lorry.key3).toStrictEqual({one: 'won', two: 'too'})
+	})
 
 	it('should not overwrite class methods when merging with conflicting keys', () => {
 		const obj = { Flash: 'conflict', Merge: 'conflict', Message: 'conflict' }
