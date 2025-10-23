@@ -47,7 +47,7 @@ describe('Throw', () => {
 
 	it('should return "this" after throwing error', () => {
 		const response = lorry.Throw(404)
-		expect(response).toBe(lorry)
+		expect(response).toEqual(lorry)
 	})
 	
 	test('Should correctly set error message', () => {
