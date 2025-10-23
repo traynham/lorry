@@ -1,298 +1,560 @@
+# Lorry
+
+A versatile JavaScript ES6 class for managing key-value pair data.  
+It provides a clean and powerful way to merge, replace, reset, and shape your data while also offering built-in error handling, flash messaging, and proxy-based method protection.
+
+---
+
 ## Table of Contents
 
-* [Introduction](#Lorry)
-* [Installation](#Installation)
-* [Usage](#Usage)
-  * [Import](#Import)
-  * [Creating an Instance](#Creating-an-Instance)
-  * [Merging keys](#Merging-keys)
-  * [Replacing keys](#Replacing-keys)
-  * [Accessing and Modifying keys directly](#Accessing-and-Modifying-keys-directly)
-  * [Resetting keys](#Resetting-keys)
-  * [Error Handling](#Error-Handling)
-  * [Flash Method](#Flash-Method)
-  * [Method Chaining](#Method-Chaining)
-  * [Kitchen Sink](#Kitchen-Sink)
-  * [Checking for Errors and Flash Messages](#Checking-for-Errors-and-Flash-Messages)
-* [Conclusion](#Conclusion)
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Import](#import)
+  - [Constructor Signature](#constructor-signature)
+  - [Creating a Simple Instance](#creating-a-simple-instance)
+  - [Creating an Instance with Data and Options](#creating-an-instance-with-data-and-options)
+  - [Merging Keys](#merging-keys)
+  - [Replacing Keys](#replacing-keys)
+  - [Resetting Keys](#resetting-keys)
+  - [Accessing and Modifying Keys Directly](#accessing-and-modifying-keys-directly)
+  - [Error Handling](#error-handling)
+  - [Flash Messages](#flash-messages)
+  - [Method Chaining](#method-chaining)
+  - [Kitchen Sink (Standalone Example)](#kitchen-sink-standalone-example)
+  - [Kitchen Sink (Express Example)](#kitchen-sink-express-example)
+  - [Checking for Errors and Flash Messages](#checking-for-errors-and-flash-messages)
+- [What’s New in This Version](#whats-new-in-this-version)
+- [License](#license)
 
+---
 
-# Lorry
-The Lorry class, built with JavaScript ES6, serves as a robust tool for manipulating key-value pair data. It offers a suite of functions for controlling and shaping your data, including operations for merging new key-value pairs into an existing dataset, replacing all current pairs with a new set, and completely resetting the dataset by removing all existing pairs. Furthermore, the class provides robust error handling capabilities to ensure your operations run smoothly.
+## Introduction
 
-The Lorry class is especially useful when creating and modifying payloads intended to be passed between different functions, such as those seen in an Express render call. The class assists in managing the data through various stages of processing, while keeping it easily accessible and malleable.
+The **Lorry** class provides a flexible and intuitive approach to managing key-value pair data.  
+It’s especially useful for managing payloads passed between functions — for example, Express render calls or response objects.
 
-Designed with end-user applications in mind, the Lorry class is not just a developer's tool but also a means to improve the user experience. It helps handle and shape the data that will ultimately be presented to the user, ensuring the data remains consistent, controlled, and ready for presentation at all times.
+Lorry can merge new data, replace existing data, or completely reset itself. It also supports flash messages and structured error handling, making it a reliable bridge between application logic and presentation.
 
-Sure, here's a paragraph explaining how to install the Lorry class using npm:
+---
 
 ## Installation
 
-Installing the Lorry class is straightforward and easy using npm, the Node Package Manager. The module is hosted on GitHub and can be added directly to your project via the GitHub repository. Simply open your terminal, navigate to your project directory, and run the following command:
+Install using **npm**:
 
 ```bash
 npm i @jessetraynham/lorry
 ```
 
-This command tells npm to install the Lorry class module from the "traynham/lorry" repository on GitHub. After running this command, the Lorry class will be downloaded and added to your `node_modules` folder, and you will be able to import it into your project files and start using it immediately.
-
+<br>
 
 ## Usage
 
 ### Import
-To use this class in your project, simply import it at the top of your JavaScript file:
 
-```javascript
-import Lorry from '@jessetraynham/lorry';
+Once installed, import it like any ES6 module:
+
+```js
+import Lorry from '@jessetraynham/lorry'
 ```
 
-### Creating an Instance
+### Constructor Signature
 
-```javascript
-// SYNTAX
+The Lorry class constructor follows this simple pattern:
+
+```js
 let payload = new Lorry(obj, opt)
 ```
 
-Creating a new instance of the Lorry class is straightforward. Call the `Lorry` constructor with or without an initial object or options:
+Both parameters are **optional**, making Lorry flexible for everything from quick scripts to structured applications.
 
-```javascript
-let payload = new Lorry()
+| Parameter | Type | Default | Description |
+|------------|------|----------|-------------|
+| **obj** | Object | `{}` | An initial set of key–value pairs to merge into the instance when created. |
+| **opt** | Object | `{}` | A configuration object that controls things like verbosity, session handling, and error logging. |
+
+You can use either, both, or neither:
+
+```js
+new Lorry()                                // empty, default options  
+new Lorry({ title: 'Hello' })              // starts with data  
+new Lorry({}, { verbose: true })           // no data, but verbose logging enabled  
+new Lorry({ key: 'value' }, { name: 'Main' }) // both data and options
 ```
 
-The Lorry constructor takes up to two arguments:
+Internally, Lorry stores its options in a private field and immediately merges the provided object into the instance.
 
-1. `obj` (optional): The initial key-value pairs to be held by the Lorry instance. This should be an object where each key-value pair represents a data entry. For instance, you could create a Lorry instance with some initial data like so:
+Every instance you create is wrapped in a proxy that protects built-in methods from being overwritten.
 
-	```javascript
-	let payload = new Lorry({ key1: 'value1', key2: 'value2' })
-	```
 
-2. `opt` (optional): A set of options to configure the behavior of the Lorry instance. This should also be an object. The available options are:
+### Creating a Simple Instance
 
-	- `name`: A name for the Lorry instance. This is used in logging and error messages.
-	- `errorLogging`: A boolean indicating whether errors should be logged to the console. Defaults to `false`.
-	- `verbose`: A boolean indicating whether the Lorry should log additional details about its operation to the console. Defaults to `false`.
+The quickest way to start using **Lorry** is without any options at all.  
+Both parameters in the constructor — the initial object and the options object — are optional.
 
-	You can set these options when creating the Lorry instance:
+```js
+import Lorry from '@jessetraynham/lorry'
 
-	```javascript
-	let payload = new Lorry(
-		{ key1: 'value1', key2: 'value2' },
-		{ name: 'MyLorry', errorLogging: true, verbose: true }
-	)
-	```
+// Create a simple instance with no arguments
+let payload = new Lorry()
 
-These optional arguments provide you with flexibility when creating a Lorry instance, allowing you to customize the initial data and behavior to suit your needs.
+// Add some data
+payload.title = 'My Great Title'
+payload.year = 1974
 
-### Merging keys
+console.log(payload)
+// → { title: 'My Great Title', year: 1974 }
+```
 
-```javascript
+You can also pass an initial object if you want to start with data:
+
+```js
+let payload = new Lorry({ title: 'Initial Title', genre: 'Science Fiction' })
+
+console.log(payload.title)
+// → Initial Title
+```
+
+Lorry works as a regular JavaScript object here — you can set, read, or delete keys directly.
+All its extra features (merging, replacing, flash messages, and errors) are available later if you decide to expand your usage.
+
+### Creating an Instance with Data and Options
+
+```js
+let payload = new Lorry(obj, opt)
+```
+
+You can create a new instance of `Lorry` with optional data and configuration:
+
+```js
+let payload = new Lorry(
+  { key1: 'value1', key2: 'value2' },
+  {
+	name: 'MyLorry',
+	errorLogging: true,
+	verbose: true,
+	session: req.session, // optional (for Express)
+	id: 'flashID' // optional unique identifier for flash messages
+  }
+)
+```
+
+#### Options
+| Option | Type | Default | Description |
+| ------- | ---- | -------- | ----------- |
+| `session` | Object | `null` | Enables flash persistence using an Express session. This is simply a mutable javascript object, so it can be used with other session-like systems. |
+| `name` | String | `''` | Label for log output. |
+| `errorLogging` | Boolean | `false` | Logs errors to the console. |
+| `verbose` | Boolean | `false` | Logs detailed internal operations. |
+| `id` | String | `'default'` | Used to store and retrieve flash messages in a session. |
+
+
+
+### Merging Keys
+
+```js
 // SYNTAX
 payload.Merge(obj)
 ```
 
-To merge new keys into the Lorry instance, use the `Merge` method:
+The `Merge()` method performs a **deep merge** of the provided object into the existing instance without overwriting methods or private properties.
 
-```javascript
-payload.Merge({ key3: 'value3' })
-```
+	payload.Merge({ key3: 'value3' })
 
-### Replacing keys
+If verbose mode is enabled, the merge action will log the merged content.
 
-```javascript
+
+
+### Replacing Keys
+
+```js
 // SYNTAX
 payload.Replace(obj)
 ```
 
-To replace all keys in the Lorry instance, use the `Replace` method. This method will call Reset() and then merge the obj passed to it.
+`Replace()` first clears all keys, then merges the provided object.
 
-```javascript
-payload.Replace({ key4: 'value4' });
+```js
+payload.Replace({ key4: 'value4' })
 ```
 
-### Accessing and Modifying keys directly
-You can set new keys directly:
+This is functionally equivalent to calling:
 
-```javascript
-payload.title = 'My Great Title'
-payload.animals = ['goat', 'chicken', 'pig', 'chimpanzee']
-payload.title = 'One of these does not belong with the other...'
-console.log(payload.title);  // Logs: One of these does not belong with the other...
+```js
+payload.Reset().Merge({ key4: 'value4' })
 ```
 
-### Resetting keys
 
-```javascript
+
+### Resetting Keys
+
+```js
 // SYNTAX
 payload.Reset()
 ```
 
-To clear all keys from the Lorry instance, use the `Reset` method:
+Removes all keys and values from the instance.
 
-```javascript
-payload.Reset();
+```js
+payload.Reset()
 ```
+
+After calling `Reset()`, your instance is clean and ready to use again.
+
+
+
+### Accessing and Modifying Keys Directly
+
+You can assign keys directly on the instance like a regular object:
+
+```js
+payload.title = 'My Great Title'
+payload.animals = ['goat', 'chicken', 'pig', 'chimpanzee']
+
+console.log(payload.title)
+// → My Great Title
+```
+
+Lorry automatically protects its internal methods from being overwritten thanks to a proxy-based guard system.
+
+If you attempt to overwrite a method name (like `Merge` or `Reset`), a warning is logged when `verbose` or `errorLogging` is enabled.
+
+---
 
 ### Error Handling
 
-```javascript
+```js
 // SYNTAX 1
-payload.Throw(code, message, name, level)
+payload.Throw(code)
 
 // SYNTAX 2
+payload.Throw(code, message, name, level)
+
+// SYNTAX 3
 payload.Throw(message, name, level)
-
 ```
 
-**Parameters**
+Lorry simplifies structured error handling using the `Throw()` method.
 
-* Code - A numeric code for the error.
-* Message - A custom error message as a string.
-* Name - The name of the error, which is a short one word description of the error.
-* Level - A numeric or textual description for the level of the error.
+Examples:
 
-The Lorry class provides a flexible approach to error handling via the `Throw()` method. This method allows you to set an error message on the Lorry instance with various levels of customization.
+```js
+// Default server error
+payload.Throw()
 
-1. **No Arguments:** If `Throw()` is called without any arguments, it will default to a generic server error, with a code of 500. The error message and name will be fetched from an internal errors list. This provides a quick way to signal a generic server error.
+// By error code
+payload.Throw(404)
 
-	```javascript
-	payload.Throw()
-	```
+// Custom message
+payload.Throw(404, 'Page not found')
 
-2. **Passing Error Code:** If you pass an error code as the first argument, `Throw()` will use this code to look up an error message from the internal errors list. If the error code does not exist in the errors list, it will default to the generic server error (code 500).
-
-	```javascript
-	payload.Throw(404)
-	```
-
-3. **Passing Error Code and Message:** For more specific error messages, you can pass both an error code and a message. In this case, the error code will still be used to look up an error name from the internal errors list, but the error message will be the custom message you pass in.
-
-	```javascript
-	payload.Throw(404, "Page not found")
-	```
-
-4. **Pass Just Message:** This variation of the Throw() method allows you to define an error message without specifying an error code or other parameters. It's particularly useful when you want to communicate a simple, clear message to the user without needing to correlate it with a specific error code or internal error name.
-	
-	```javascript
-	payload.Throw("Sorry, that action is not possible. Seek help.")
-	```
-
-5. **Passing Message, Name, and Level:** This signature allows for even greater customization of the error thrown by letting you specify not just the error message, but also the error name and the level of the error.
-	
-	```javascript
-	payload.Throw("Invalid input provided", "InputError", "Critical")
-	```
-
-
-These options provide flexibility in handling errors and allow you to easily customize the error message to suit the situation. Whether you need a quick, default error or a more specific, custom error, the Lorry class has got you covered.
-
-
-### Flash Method
-
-```javascript
-// SYNTAX
-payload.Flash(title, message)
+// Custom name and level
+payload.Throw('Invalid input provided', 'InputError', 'Critical')
 ```
 
-The `Flash` method is used to set a flash message on the Lorry instance. Flash messages are typically short-lived messages used to communicate important information to the end user, such as the result of a form submission or an action confirmation. 
+When `errorLogging` is enabled, the error details are printed to the console:
 
-Here's how you can use the `Flash` method:
+	MyLorry › ERROR 404 NotFound: Page not found
 
-```javascript
-payload.Flash('Title', 'This is a flash message')
-```
+The resulting error is stored in `payload.err`.
 
-In this example, 'Title' is the title of the flash message, and 'This is a flash message' is the content of the message.
-
-### Method Chaining
-
-One of the key design features of the Lorry class is its support for method chaining. This means you can call one method after another in a continuous line of code, making your code cleaner and more readable.
-
-Every method in the Lorry class (with the exception of the private methods) returns the instance (`this`), which allows you to chain additional method calls. Here is an example:
-
-```javascript
-let payload = new Lorry({ key1: 'value1', key2: 'value2' }, { name: 'MyLorry', errorLogging: true, verbose: true })
-  .Flash('FlashTitle', 'This is a flash message')
-  .Replace({ key5: 'value5' })
-  .Throw(404, 'Resource not found', 'NotFound', 2);
-```
-
-This will create a Lorry instance, set a flash message, replace all existing key-value pairs with a new one, and throw an error, all in one line of code.
-
-
-### Kitchen Sink
-
-This section presents a comprehensive example that combines all the functionalities of the `Lorry` class in a single sequence using method chaining.
-
-```javascript
-// Import Lorry
-import Lorry from '@jessetraynham/lorry';
-
-// Instantiate a new Lorry object with initial data and options
-let payload = new Lorry({ key1: 'value1', key2: 'value2' }, { name: 'MyLorry', errorLogging: true, verbose: true })
-  .Merge({ key3: 'value3', key4: 'value4' })
-  .Replace({ key5: 'value5' })
-  .Flash('FlashTitle', 'This is a flash message')
-  .Throw(404, 'Resource not found', 'NotFound', 2);
-
-// Directly set a key on the instance
-payload.title = 'My Great Title';
-
-// Directly set a key on the instance to a function and run it
-payload.myFunction = () => 'Hello, World!';
-console.log(payload.myFunction());
-
-// Log the resulting Lorry object
-console.log(payload);
-
-```
-
-**Result**
-```javascript
+```js
 {
-	flash: {
-		title: 'FlashTitle',
-		message: 'This is a flash message'
-	},
-	key5: 'value5',
-	title: 'My Great Title',
-	myFunction: [Function],
-	err: {
-		name: 'NotFound',
-		code: 404,
-		message: 'Resource not found',
-		level: 2
-	}
+  name: 'NotFound',
+  code: 404,
+  message: 'Page not found',
+  level: 2
 }
 ```
 
-After running the above code, the lorry object will contain the newly merged data, the flash message, the developer note, the title, the function, and the error message. Note that the Replace method clears the previous data and the flash message from the instance. The error message set by the Throw method can be used for error handling.
+
+
+### Flash Messages
+
+The `Flash()` method is used to set, retrieve, or store temporary messages on the Lorry instance. These short-lived messages are useful for communicating success, warnings, or errors between page requests or function calls.
+
+---
+
+#### Signatures
+
+```js
+payload.Flash(title, message, fields)
+payload.Flash(message)
+payload.Flash(fields)
+payload.Flash()  // retrieves from session (if configured)
+```
+
+---
+
+#### Overview
+
+`Flash()` is flexible — it adjusts automatically depending on how you call it.
+
+| Example | Behavior |
+|----------|-----------|
+| `payload.Flash('Saved!', 'Your profile was updated.')` | Sets a flash with a title and message. |
+| `payload.Flash('Form submission failed.')` | Sets a flash with only a message (no title). |
+| `payload.Flash({ type: 'error', field: 'email' })` | Sets a flash using a fields object only. |
+| `payload.Flash()` | Retrieves and clears a stored flash from the session (if `session` was set in the constructor). |
+
+---
+
+#### Setting a Flash Message
+
+You can set a title and message, or just message:
+
+```js
+payload.Flash('Success', 'Profile updated successfully')
+```
+
+or simply:
+
+```js
+payload.Flash('Profile updated successfully')
+```
+
+---
+
+#### Adding Extra Fields
+
+Optional fields can be included for things like message type, affected form field, or redirect hints.
+
+```js
+payload.Flash('Error', 'Invalid email address', { type: 'error', field: 'email' })
+```
+
+All undefined values are automatically stripped out, leaving only meaningful data.
+
+Resulting structure:
+
+```js
+{
+  title: 'Error',
+  message: 'Invalid email address',
+  type: 'error',
+  field: 'email'
+}
+```
+
+---
+
+#### Retrieving from Session
+
+If you provided a session when creating the Lorry instance, you can use `Flash()` with no arguments to **retrieve and remove** the stored flash:
+
+```js
+let payload = new Lorry({}, { session: req.session, id: 'notify' })
+
+// Set flash in one request
+payload.Flash('Notice', 'Settings saved.')
+```
+
+Later, in a subsequent request:
+
+```js
+let payload = new Lorry({}, { session: req.session, id: 'notify' })
+payload.Flash()
+
+console.log(payload.flash)
+// → { title: 'Notice', message: 'Settings saved.' }
+```
+
+Once retrieved, the flash is deleted from the session automatically.
+
+---
+
+#### Notes
+
+- All parameters (`title` , `message`, and `fields`) are optional.
+- When a `session` is provided, the flash is persisted under `session.flash[id]`.
+- If no `session` is configured, the flash remains attached to the current instance only.
+- Method returns the Lorry instance, allowing chaining (e.g. `.Flash(...).Merge(...).Throw(...)`).
+
+---
+
+#### Verbose Logging Example
+
+When `verbose: true` is enabled in your constructor options, each call to `Flash()` will log the flash content to the console:
+
+```js
+MyLorry › Flash › {"title":"Success","message":"Profile updated successfully"}
+```
+
+
+
+### Method Chaining
+
+Every method returns the instance itself, allowing you to chain operations for clarity and brevity:
+
+```js
+payload
+  .Merge({ key1: 'value1' })
+  .Flash('FlashTitle', 'This is a flash message')
+  .Throw(404, 'Resource not found', 'NotFound', 2)
+```
+
+
+
+### Kitchen Sink (Standalone Example)
+
+This example demonstrates all the major features of **Lorry** in a single self-contained script.
+
+```js
+import Lorry from '@jessetraynham/lorry'
+
+let payload = new Lorry(
+  { key1: 'value1', key2: 'value2' },
+  { name: 'MyLorry', errorLogging: true, verbose: true }
+)
+.Merge({ key3: 'value3', key4: 'value4' })
+.Replace({ key5: 'value5' })
+.Flash('FlashTitle', 'This is a flash message')
+.Throw(404, 'Resource not found', 'NotFound', 2)
+
+payload.title = 'My Great Title'
+payload.myFunction = () => 'Hello, World!'
+
+console.log(payload.myFunction())
+console.log(payload)
+```
+
+**Result:**
+
+```js
+{
+  flash: { title: 'FlashTitle', message: 'This is a flash message' },
+  key5: 'value5',
+  title: 'My Great Title',
+  myFunction: [Function],
+  err: { name: 'NotFound', code: 404, message: 'Resource not found', level: 2 }
+}
+```
+
+---
+
+### Kitchen Sink (Express Example)
+
+This version demonstrates how **Lorry** integrates cleanly into an Express app —  
+first to **set** a flash message in one route, and then to **retrieve** it in another.
+
+```js
+import express from 'express'
+import session from 'express-session'
+import Lorry from '@jessetraynham/lorry'
+
+const app = express()
+
+app.use(session({
+  secret: 'mySecretKey',
+  resave: false,
+  saveUninitialized: true
+}))
+
+// ───────────────────────────────
+// 1️⃣  SET FLASH MESSAGE
+// ───────────────────────────────
+app.get('/set', (req, res) => {
+
+  const payload = new Lorry(
+	{ key1: 'value1', key2: 'value2' },
+	{ 
+	  name: 'MyLorry',
+	  errorLogging: true,
+	  verbose: true,
+	  session: req.session,
+	  id: 'main'
+	}
+  )
+  .Merge({ key3: 'value3' })
+  .Flash('Success', 'Profile updated successfully.', { type: 'info' })
+  .Throw(404, 'Resource not found', 'NotFound', 2)
+
+  payload.title = 'Flash Set Example'
+
+  console.log('Set flash:', payload.flash)
+  res.send('Flash message stored in session. Go to /get to retrieve it.')
+})
+
+// ───────────────────────────────
+// 2️⃣  GET FLASH MESSAGE
+// ───────────────────────────────
+app.get('/get', (req, res) => {
+
+  const payload = new Lorry({}, { session: req.session, id: 'main' })
+  payload.Flash()  // retrieves and clears from session
+
+  if (payload.flash) {
+	console.log('Retrieved flash:', payload.flash)
+  } else {
+	console.log('No flash found.')
+  }
+
+  res.render('index', payload)
+})
+```
+
+**Result:**
+
+1. Visit `/set` → The flash is created and saved in the session.  
+2. Visit `/get` → The flash is retrieved and automatically removed from the session.  
+
+**Console output:**
+
+```js
+Set flash: { title: 'Success', message: 'Profile updated successfully.', type: 'info' }
+Retrieved flash: { title: 'Success', message: 'Profile updated successfully.', type: 'info' }
+```
+
+---
+
+This example illustrates the full session lifecycle:
+- `/set` stores a message under `session.flash.id`.
+- `/get` loads and deletes it automatically with `payload.Flash()`.
+- The same pattern works across redirects, form submissions, or any multi-step workflow.
+
 
 
 ### Checking for Errors and Flash Messages
 
-The `Throw()` and `Flash()` methods provide a convenient way to track if an error has occurred or if a flash message has been set in the Lorry instance. Each of these methods adds a distinct key to the instance (`err` for `Throw()`, `flash` for `Flash()`) with corresponding details.
+You can quickly check whether a flash message or an error exists:
 
-You can use this feature for easy truthy checks in your code. This is especially useful for quickly identifying if an error has occurred or if there's a flash message to be displayed.
-
-For example, if you want to check if an error has been thrown, you can do:
-
-```javascript
-if (payload.err) {
-  console.log('There was an error!')
-}
+```js
+if (payload.err) console.log('There was an error!')
+if (payload.flash) console.log('There is a flash message to display!')
 ```
 
-In the same vein, you can check if a flash message has been set:
+Each property contains structured data for use in templates or logs.
 
-```javascript
-if (payload.flash) {
-  console.log('There is a flash message to display!')
-}
-```
+---
 
-Remember, the `err` and `flash` keys will hold the details of the error or flash message. This makes it easy to handle them accordingly, whether you need to display an error message to the user or log the details for debugging.
+## What’s New in This Version
 
-## Conclusion
+This release introduces several key improvements and internal rewrites:
 
-In conclusion, the `Lorry` class serves as a versatile tool for managing key-value pair data in a JavaScript ES6 environment. It was designed with user-friendliness and flexibility in mind, and it shines in applications where payloads need to be passed between functions, particularly in scenarios involving user-facing information display. Whether you're merging, replacing, or resetting data, `Lorry` ensures efficient and effective handling. The provided methods even assist in generating flash messages for end-users and development messages for developers, and they allow for easy error checking with the `Throw()` method. By facilitating method chaining, it promotes clean and maintainable code. We hope that you find `Lorry` as useful in your projects as it has been in ours, and we welcome any feedback or contributions that can help improve its functionality. Happy coding!
+1. **Proxy Protection:**  
+   Prevents overwriting, redefining, or deleting built-in methods.  
+   Safe to assign arbitrary keys without fear of collisions.
+
+2. **Session-Aware Flash:**  
+   Flash messages can now persist between requests via an Express session using the new `session` and `id` options.
+
+3. **Verbose Logging:**  
+   Granular, opt-in console feedback for all major operations.
+
+4. **Improved `_merge()` Logic:**  
+   Rewritten deep merge with object-type checking for reliable nested structures.
+
+5. **Private Fields:**  
+   Cleaner internal state management using ES2022 private fields (`#OPT`).
+
+6. **Simplified Error Flow:**  
+   The `Throw()` method now gracefully handles any input pattern while retaining the full internal error list.
+
+7. **Removed Lodash Dependency:**  
+   The module is now 100% self-contained.
+
+---
+
+## License
+
+[MIT License](./LICENSE)
