@@ -13,16 +13,69 @@ class Lorry {
 		
 		// SET OPTIONS
 		this.#OPT = {
+			session: opt.session || null,
 			name: opt.name || '',
 			errorLogging: opt.errorLogging || false,
-			verbose: opt.verbose || false
+			verbose: opt.verbose || false,
+			id: opt.id ?? 'default' 
 		}
 		
 		// MERGE INITIAL INSTANCE OBJ
 		this.Merge(obj)
 		
+		// Return proxied instance
+		return this.#createProtectedProxy()
+		
 	}
 	
+	#createProtectedProxy() {
+		
+		const proto = Object.getPrototypeOf(this)
+		const methodNames = new Set(
+			Object.getOwnPropertyNames(proto).filter(k => typeof this[k] === 'function')
+		)
+		
+		const logBlocked = (kind, prop) => {
+			if (this.#OPT.errorLogging || this.#OPT.verbose) {
+				console.error(`${this.#OPT.name} › ${kind} BLOCKED: cannot overwrite method "${String(prop)}"`)
+			}
+		}
+		
+		const target = this
+	
+		return new Proxy(target, {
+			
+			// 🔑 Make methods run with `this === target` (has #OPT)
+			get(t, prop, receiver) {
+				const value = Reflect.get(t, prop, receiver)
+				return (typeof value === 'function') ? value.bind(t) : value
+			},
+			
+			set(t, prop, value, receiver) {
+				if (methodNames.has(prop)) {
+					logBlocked('SET', prop)
+					return true
+				}
+				return Reflect.set(t, prop, value, receiver)
+			},
+		
+			defineProperty(t, prop, descriptor) {
+				if (methodNames.has(prop)) {
+					logBlocked('DEFINE', prop)
+					return true
+				}
+				return Reflect.defineProperty(t, prop, descriptor)
+			},
+		
+			deleteProperty(t, prop) {
+				if (methodNames.has(prop)) {
+					logBlocked('DELETE', prop)
+					return true
+				}
+				return Reflect.deleteProperty(t, prop)
+			}
+		})
+	}
 	
 	// The _cleanObj() method takes an object as an argument and removes
 	// any keys from it that match method names in the Lorry class, preventing 
@@ -81,14 +134,66 @@ class Lorry {
 
 
 	// The Flash() method sets a flash message on the instance.
-	Flash(title, message){
+	Flash(title, message, fields){
 		
-		this.flash = {
-			title: title,
-			message: message
+		let isEmpty = v => v == null || (typeof v === 'string' ? v.trim() === '' : v === '');
+		let isGet = (isEmpty(title) && isEmpty(message))
+		let session = this.#OPT.session || null
+		let id = this.#OPT.id
+		
+		if(session && !session.flash){
+			session.flash = {}
 		}
 		
-		this._verbose(`Flash › ${this.flash.title}: ${this.flash.message}`)
+		// IF ONLY FIELDS
+		if (typeof title === 'object') {
+			fields = title 
+			message = undefined
+			title = undefined
+		}
+		
+		// IF NO TITLE
+		if (typeof message === 'object') {
+			fields = message 
+			message = title
+			title = undefined
+		}
+		
+		// IF ONLY MESSAGE
+		if (typeof message === 'undefined') {
+			message = title
+			title = undefined
+		}
+		
+		if(isGet && session?.flash){
+			
+			this.flash = session.flash[id]
+			delete session.flash[id]
+			
+		} else {
+			
+			this.flash = {
+				title: title,
+				message: message,
+				...fields
+			}
+			
+			this.flash = Object.fromEntries(
+				Object.entries(this.flash).filter(([_, v]) => v !== undefined)
+			);
+			
+		}
+		
+		// IF EMPTY FLASH - NOTE: THIS CODE IS NEVER REACHED AT THIS POINT.
+		//if(this.flash && Object.keys(this.flash).length == 0){
+		//	delete this.flash
+		//}
+		
+		if(session && !isGet && this.flash){
+			session.flash[id] = this.flash
+		}
+		
+		this._verbose(`Flash › ${JSON.stringify(this.flash)}`)
 		
 		return this
 		
