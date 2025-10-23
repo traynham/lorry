@@ -1,34 +1,55 @@
 {
   "name": "@jessetraynham/lorry",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "publishConfig": {
     "access": "public"
   },
   "description": "Lorry is a flexible and dynamic JavaScript utility class, providing methods for managing and manipulating object properties with protection for class methods, and also includes functionality for generating flash and error messages.",
-  "main": "index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/lorry.js"
+    }
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./src/lorry.js",
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest --verbose --config .jest.js"
   },
+  "sideEffects": false,
   "keywords": [
-    "object",
-    "manipulation",
-    "error",
-    "handling",
+    "lorry",
+    "payload",
     "flash",
-    "messages",
-    "end",
-    "user",
-    "errors"
+    "flash-messages",
+    "express",
+    "session",
+    "merge",
+    "reset",
+    "replace",
+    "proxy",
+    "error-handling",
+    "object-utility",
+    "data-management",
+    "esm"
   ],
   "author": "Jesse Traynham",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^8.45.0",
-    "jest": "^29.6.1"
+  "eslint": "^8.45.0",
+  "jest": "^29.6.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/traynham/lorry.git"
-  }
+  },
+  "bugs": { "url": "https://github.com/traynham/lorry/issues" },
+  "homepage": "https://www.jessetraynham.com/javascript/lorry"
 }
